@@ -1,0 +1,10 @@
+tensorflow[and-cuda]
+pandas
+numpy
+scikit-learn
+matplotlib
+seaborn
+opencv-python
+kaggle
+jupyter
+ipykernel
