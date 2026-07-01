@@ -1,0 +1,265 @@
+\documentclass[12pt]{article}
+
+\usepackage{sbc-template}
+\usepackage{graphicx,url}
+\usepackage[utf8]{inputenc}
+\usepackage[brazilian]{babel}
+%\usepackage[latin1]{inputenc}
+
+\sloppy
+
+\title{Classificação Automatizada de Retinas Instáveis e Saudáveis em Imagens de Fundo de Olho para Apoio ao Diagnóstico Médico}
+
+\author{João Arthur C. Oliveira\inst{1}, Kauã Henrique da Silva\inst{1}, Flávio Hitler Atalin Putin\inst{1}}
+
+\address{Sistema de Informação - Universidade Federal do Piauí
+  \email{joao.arthur@ufpi.com.br, flavio.martins@ufpi.edu.br, kaua.sbc@gmail.com}
+}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+  This paper presents an automated approach for binary classification of retinal
+  fundus images as unstable or healthy, aiming to support medical diagnosis.
+  The proposed method uses Deep Learning with Transfer Learning based on the
+  EfficientNet-B0 and EfficientNet-B3 architectures. A dataset with images from the RFMiD database was
+  preprocessed, artificially balanced and expanded through data augmentation. The images were divided
+  into training, validation and test sets. The model performance was
+  evaluated using Accuracy, Precision, Recall and F1-score. Furthermore, the Grad-CAM technique was used to provide explainability to the predictions.
+\end{abstract}
+
+\begin{resumo}
+  Este artigo apresenta uma abordagem automatizada para a classificação binária
+  de imagens de fundo de olho em retinas instáveis ou saudáveis, visando apoiar
+  o diagnóstico médico. Foi empregado Deep Learning com Transfer Learning a
+  partir das arquiteturas EfficientNet-B0 e EfficientNet-B3. O conjunto de dados da base RFMiD 
+  foi submetido a etapas de pré-processamento, balanceamento artificial e aumento de
+  dados. As imagens foram divididas em treinamento, validação e teste, e o
+  desempenho dos modelos foi avaliado por Acurácia, Precisão, Sensibilidade (Recall) e F1-score. Além disso, a técnica Grad-CAM foi utilizada para prover explicabilidade às predições.
+\end{resumo}
+
+\section{Introdução}
+
+A retina é uma fina camada de tecido nervoso sensível à luz localizada na parte
+posterior do olho. Ela é responsável por captar os estímulos luminosos e
+convertê-los em sinais enviados ao cérebro pelo nervo óptico, possibilitando a
+formação das imagens \cite{Nguyen2019Retina}. Por exercer uma função essencial no sistema visual, a
+retina é uma das estruturas mais importantes para a percepção de cores,
+formas, contrastes e detalhes do ambiente \cite{Atchison2023Optics}.
+
+A retina pode sofrer riscos relacionados ao envelhecimento, à exposição a
+condições metabólicas, circulatórias, inflamatórias e traumáticas, além de
+fatores associados ao estilo de vida e ao histórico clínico do paciente. Quando
+esses riscos afetam sua estrutura ou funcionamento, podem comprometer a
+qualidade da visão e dificultar atividades cotidianas, tornando importante o
+acompanhamento e a identificação precoce de possíveis sinais de comprometimento da retina \cite{Weber2020Retinal}.
+
+Atualmente, a classificação de retinas pode ser realizada por meio da análise
+clínica de especialistas, exames oftalmológicos e interpretação de imagens de
+fundo de olho. Além dessas abordagens, técnicas computacionais baseadas em
+Processamento de Imagens, Machine Learning e Deep Learning têm sido utilizadas
+para auxiliar na identificação de padrões visuais. Essas técnicas são
+importantes porque podem apoiar a triagem, reduzir a subjetividade da análise e
+contribuir para uma tomada de decisão médica mais rápida e precisa \cite{Advances}.
+
+Este trabalho tem como objetivo desenvolver um modelo automatizado para
+classificação binária de imagens de fundo de olho em duas classes: retinas
+comprometidas e retinas saudáveis. Com isso, busca-se oferecer uma ferramenta de
+apoio ao diagnóstico médico, auxiliando na análise de imagens e na identificação
+de casos que possam exigir maior atenção clínica.
+
+O método proposto utiliza uma abordagem baseada em Deep Learning com Transfer
+Learning a partir das arquiteturas EfficientNet-B0 e EfficientNet-B3. As imagens de retina são
+submetidas a etapas de pré-processamento (corte e filtro CLAHE) e aumento de dados. Os modelos são
+treinados para diferenciar automaticamente retinas com risco (instáveis) de retinas
+saudáveis, aproveitando representações previamente aprendidas em grandes bases
+de imagens. Para garantir a transparência das predições, a técnica Grad-CAM é empregada na geração de mapas de calor visuais.
+
+\section{Trabalhos Relacionados}
+
+Nesta sessão foi realizada uma busca na literatura de trabalhos relacionados, que tem como objetivo analisar as questões abordadas nesse artigo. Os artigos foram coletados na plataforma scopus, reconhecida internacionalmente pela diversidade de artigos indexados~\cite{keele:2007}, para localizar artigos que contribuíssem com estudos semelhantes.
+
+A literatura recente apresenta avanços significativos no desenvolvimento de ferramentas de apoio ao diagnóstico médico baseadas em Inteligência Artificial (IA) para a análise de imagens de fundo de olho. As abordagens propostas variam desde classificadores binários focados em patologias isoladas até sistemas complexos de rastreamento multirrótulo capazes de identificar dezenas de condições retinianas simultaneamente.
+
+Gargeya~\textit{et al.}~(2017)\cite{gargeya:2017} desenvolveram um algoritmo baseado em redes neurais convolucionais (CNN) customizadas utilizando uma base robusta de 75.137 imagens coloridas de fundo de olho provenientes do banco de dados público EyePACS. O modelo proposto alcançou uma área abaixo da curva ROC (AUC) de 0,97, com 94\% de sensibilidade e 98\% de especificidade na validação cruzada local. Quando submetido a validações externas independentes nas bases MESSIDOR 2 e E-Ophtha, o modelo demonstrado manteve alta capacidade de generalização com AUCs de 0,94 e 0,95, respectivamente. Os autores destacaram o uso de mapas de ativação (heatmaps) para garantir explicabilidade clínica e ressaltaram a viabilidade de execução do modelo em hardware convencional de clínicas de atenção primária.
+
+Lee~\textit{et al.}~(2021)\cite{lee:2021} propuseram um software de suporte à decisão estruturado em cinco classificadores independentes do tipo "um-contra-todos" (OVR - \textit{One-Versus-Rest}) baseados na arquitetura ResNet-50 operando em paralelo. Treinado com 43.221 fotografias de retina, o sistema foi desenhado para detectar degeneração macular relacionada à idade (DMRI), membrana epiretiniana (MER), RD, oclusão vascular da retina (OVR) e suspeita de glaucoma. A escolha por modelos paralelos em vez de uma rede multiclasse única justificou-se pela flexibilidade na aplicação de pré-processamentos específicos (como o CLAHE) e pela capacidade de lidar com diagnósticos múltiplos em um mesmo paciente sem a perda de desempenho induzida pela função \textit{softmax} tradicional em predições \textit{top-k}. Para mitigar a queda de performance decorrente do deslocamento de distribuição (\textit{domain shift}), os autores aplicaram técnicas de adaptação de domínio não supervisionada e destilação de conhecimento (\textit{knowledge distillation}), alcançando uma AUC macro-média de 0,964 após o ajuste.
+
+Cen~\textit{et al.}~(2021) \cite{cenautomatic} construíram uma plataforma de aprendizado profundo (DLP) capaz de detectar até 39 classes de doenças e condições fundoscópicas distintas. O estudo utilizou um ecossistema massivo e heterogêneo de 249.620 imagens de fundo de olho oriundas de múltiplas fontes hospitalares e étnicas na China e nos Estados Unidos. A arquitetura adotou um sistema hierárquico em dois níveis suportado por três grupos de CNNs e uma rede Mask-RCNN. No primeiro nível, realizava-se a classificação multirrótulo de 30 grandes classes (identificando características macro como hemorragias, descolamentos e exsudatos). No segundo nível, modelos especializados realizavam a classificação de subclasses em regiões de interesse recortadas (como a análise do disco óptico para glaucoma). O sistema obteve uma sensibilidade geral de 0,978 e AUC de 0,9984 no conjunto de teste primário, demonstrando desempenho estatisticamente comparável ao de especialistas em retina com mais de 10 anos de experiência clínica.
+
+Enquanto os trabalhos citados da literatura frequentemente dependem de volumes massivos de dados (variando de 43 mil a mais de 240 mil imagens) para o treinamento de arquiteturas complexas \cite{lee:2021, cenautomatic}, a presente pesquisa diferencia-se ao propor e avaliar uma abordagem metodológica focada na \textit{Classificação Automatizada de Retinas Instáveis e Saudáveis em Imagens de Fundo de Olho para Apoio ao Diagnóstico Médico}. Utilizando um conjunto de dados mais enxuto da base RFMiD para o treinamento e avaliação, este trabalho busca demonstrar a viabilidade de modelos de aprendizado profundo (EfficientNet-B0 e B3) associados a técnicas de balanceamento, pré-processamento agressivo e explicabilidade visual (Grad-CAM). Dessa forma, aproxima-se a tecnologia de IA de realidades clínicas com maior restrição de dados e transparência no processo decisório.
+
+\section{Método Proposto}
+
+Nesta seção é apresentada a descrição das etapas envolvidas no método proposto para a classificação de imagens de fundo de olho, bem como a base de dados utilizada. A abordagem consiste em uma sequência (pipeline) de pré-processamento, aumento de dados, extração de características e classificação utilizando redes neurais convolucionais. As etapas do método podem ser visualizadas com o apoio da geração de imagens ilustrativas durante a execução do \textit{script} de pré-processamento.
+
+\subsection{Base de Imagens}
+
+Para o desenvolvimento e validação do método, utilizou-se o conjunto de dados RFMiD (\textit{Retinal Fundus Multi-disease Image Dataset}). Inicialmente, a base oficial contava com uma divisão predefinida de 1.920 imagens para treinamento, 640 para validação e 640 para teste. No entanto, para os fins experimentais deste projeto, as imagens foram aglutinadas e a divisão foi refeita utilizando a proporção de 80\% para treinamento, 10\% para validação e 10\% para teste. Como o foco principal é a classificação binária de risco (presença ou ausência de condições adversas), os rótulos foram consolidados em duas categorias: retina sem risco (maioria) e retina com risco (minoria). A Figura~\ref{fig:tabela_doencas} ilustra a distribuição e contagem de todas as patologias presentes no conjunto de dados.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\textwidth]{imagens/tabela_todas_doencas.png}
+\caption{Distribuição original das doenças mapeadas no conjunto de dados RFMiD.}
+\label{fig:tabela_doencas}
+\end{figure}
+
+Para contornar o desbalanceamento de classes no conjunto de treinamento, foi aplicada uma técnica de \textit{oversampling} que reduplicou aleatoriamente amostras da classe minoritária até igualar ao número de instâncias da classe majoritária, criando assim um conjunto de treinamento equilibrado.
+
+\subsection{Pré-processamento}
+
+O pré-processamento é vital para padronizar as imagens e remover ruídos, especialmente por conta da variabilidade na iluminação e presença de bordas pretas nas capturas oftalmológicas. O processo inclui as seguintes etapas ilustradas nos gráficos gerados pelo \textit{pipeline}:
+1. \textbf{Localização e Corte (Crop)}: A imagem original em RGB é convertida para escala de cinza e um limiar (\textit{threshold}) é aplicado para criar uma máscara. O maior contorno é localizado para realizar um corte (crop), removendo as áreas mortas (bordas pretas) ao redor do globo ocular.
+2. \textbf{Realce de Contraste}: Na imagem recortada, o espaço de cor é convertido para LAB e o algoritmo CLAHE (\textit{Contrast Limited Adaptive Histogram Equalization}) é aplicado no canal L (Luminância) para realçar vasos sanguíneos e lesões locais.
+3. \textbf{Redimensionamento}: Por fim, a imagem tratada é redimensionada para $384 \times 384$ pixels para ser consumida pelas redes neurais.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\textwidth]{imagens/passo_a_passo_clahe.png}
+\caption{Passos do pré-processamento, com aplicação de corte e filtro CLAHE.}
+\label{fig:preproc}
+\end{figure}
+
+\subsection{Aumento de Dados (\textit{Data Augmentation})}
+
+Com o objetivo de melhorar a capacidade de generalização do modelo e reduzir o \textit{overfitting}, o conjunto de treinamento já balanceado sofre aumento de dados em tempo de execução. As transformações aplicadas incluem: rotações aleatórias (até 50 graus), espelhamento horizontal e vertical (\textit{flips}) e variações de brilho (entre 0.8 e 1.2). Transformações com potencial de perda de informação estrutural nas bordas da retina, como \textit{zoom} excessivo e grandes translações, foram evitadas.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\textwidth]{imagens/exemplos_data_augmentation.png}
+\caption{Exemplos das transformações geradas no \textit{Data Augmentation} aplicadas sobre a imagem final do pré-processamento.}
+\label{fig:augmentation}
+\end{figure}
+
+\subsection{Modelagem e Treinamento}
+
+O núcleo da classificação baseia-se na técnica de Transferência de Aprendizado (\textit{Transfer Learning}) utilizando os pesos pré-treinados da ImageNet. Foram avaliadas e comparadas duas arquiteturas consolidadas por sua eficiência computacional: EfficientNet-B0 e EfficientNet-B3. 
+A arquitetura base teve suas camadas superiores (\textit{top}) removidas para inserção de uma camada de \textit{pooling} global e uma camada densa de saída com ativação compatível para o problema binário. Durante o treinamento, adotou-se o cômputo de pesos de classe para penalizar de forma mais rigorosa eventuais falsos negativos na classe de risco.
+
+\section{Resultados}
+
+Esta seção detalha a configuração experimental do treinamento e apresenta os resultados alcançados pelos modelos propostos na base de teste, juntamente com as técnicas de explicabilidade.
+
+\subsection{Configuração Experimental}
+
+O treinamento dos modelos foi desenvolvido utilizando as bibliotecas TensorFlow, Keras, OpenCV e Scikit-Learn. A execução ocorreu em ambiente contendo recursos de GPU. 
+Para ambas as arquiteturas (EfficientNet-B0 e B3), configurou-se imagens de tamanho $384 \times 384$ e tamanho de lote (\textit{batch size}) igual a 2. O processo de treinamento foi dividido em duas fases: um aquecimento (\textit{warm up}) da camada classificadora por 10 épocas utilizando taxa de aprendizado de $0.001$, seguido por um ajuste fino (\textit{fine-tuning}) de toda a rede por mais 10 épocas com taxa de aprendizado de $1 \times 10^{-5}$. 
+
+Os modelos foram validados no conjunto de teste através das métricas: Acurácia, Precisão, Sensibilidade (Recall) e \textit{F1-Score}.
+
+\subsection{Resultados Experimentais e Comparativos}
+
+A Tabela~\ref{tab:metricas-gerais} detalha a performance registrada no conjunto de teste ao comparar os dois modelos treinados. As métricas refletem a média macro e a capacidade de identificação correta da classe crítica (retina com risco).
+
+\begin{table}[ht]
+\centering
+\caption{Comparação de métricas gerais no conjunto de teste}
+\label{tab:metricas-gerais}
+\begin{tabular}{lcccc}
+\hline
+\textbf{Modelo} & \textbf{Accuracy} & \textbf{Precision} & \textbf{Recall} & \textbf{F1-score} \\
+\hline
+EfficientNet-B0 & 91.72\% & 88.75\% & 85.44\% & 86.95\% \\
+EfficientNet-B3 & 91.88\% & 91.19\% & 83.34\% & 86.49\% \\
+\hline
+\end{tabular}
+\end{table}
+
+Além dos resultados tabulares quantitativos, a visualização gráfica através das matrizes de confusão e Curvas ROC (geradas pelos \textit{scripts} de avaliação do projeto) confirmam o grau de confiança da classificação para cada variante do modelo, permitindo a escolha daquele com a melhor compensação entre precisão e recall.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\textwidth]{imagens/matriz_confusao_comparativa.png}
+\caption{Matriz de confusão comparativa no conjunto de teste entre os modelos EfficientNet-B0 e EfficientNet-B3.}
+\label{fig:matriz}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\textwidth]{imagens/curva_roc_comparativa.png}
+\caption{Curvas ROC comparativas para os modelos treinados, destacando a respectiva métrica AUC.}
+\label{fig:roc}
+\end{figure}
+
+\subsection{Explicabilidade com Grad-CAM}
+
+Para mitigar o caráter "caixa-preta" das redes convolucionais e fornecer informações úteis ao especialista médico, a técnica Grad-CAM (\textit{Gradient-weighted Class Activation Mapping}) foi implementada. Ela gera mapas de calor evidenciando as áreas da retina em que o modelo concentrou sua atenção antes de emitir o diagnóstico. 
+
+Como pode ser observado na Figura~\ref{fig:gradcam}, em exemplos práticos extraídos do conjunto de testes, o Grad-CAM demonstrou que o modelo é capaz de identificar ativamente regiões anômalas, como exsudatos, hemorragias ou opacidades que justificam o direcionamento para um diagnóstico de risco. A comparação visual dos mapas de ativação reforça a interpretabilidade da rede, fornecendo uma base transparente e sólida para a tomada de decisão clínica.
+
+Analisando os padrões visuais gerados, nota-se que na imagem base (identificada com "Risco Real: 1"), a qual apresenta diversas manchas escuras (sugestivas de hemorragias e lesões) espalhadas pela retina, ambos os modelos conseguem direcionar seu foco para tais anomalias. O modelo EfficientNet-B0 (V1) exibe uma ativação espacialmente mais difusa, mapeando amplamente as áreas afetadas e obtendo alta confiança na predição. Por outro lado, o modelo EfficientNet-B3 (V2) concentra suas áreas de maior "calor" (em vermelho intenso) de forma mais contundente em regiões periféricas específicas onde há agrupamentos visíveis de lesões. Esse comportamento evidencia que a arquitetura aprendeu a rastrear marcadores patológicos reais para embasar a sua decisão, ao invés de se ancorar em ruídos de fundo ou na anatomia natural do disco óptico.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\textwidth]{imagens/grad_cam/comparativo_v1_v2_resultado_perfeito.png}
+\caption{Comparativo principal de mapas de calor gerados pelo Grad-CAM evidenciando as regiões de ativação das patologias.}
+\label{fig:gradcam}
+\end{figure}
+
+Adicionalmente, a Figura~\ref{fig:gradcam433} apresenta outro caso notável de sucesso (Rótulo Real 1) em que ambas as arquiteturas acertaram a predição com probabilidade acima de 92\%. Nela, é possível observar uma correlação ainda mais evidente: as zonas vermelhas intensas dos mapas de ativação alinham-se precisamente com a região de exsudatos brilhantes à direita e com as grandes áreas de hemorragia escuras ao centro. O modelo EfficientNet-B3 delineou o bolsão de exsudatos com extrema precisão, atestando novamente a eficácia do uso de mapas de ativação na interpretação diagnóstica.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\textwidth]{imagens/grad_cam/gradcam_exemplo_433_perfeito.png}
+\caption{Exemplo adicional de acerto de ambos os modelos, onde as ativações sobrepõem-se fortemente a exsudatos brilhantes e hemorragias.}
+\label{fig:gradcam433}
+\end{figure}
+
+Apesar dos excelentes resultados, a análise de explicabilidade também revelou limitações importantes e oportunidades de melhoria. As Figuras~\ref{fig:gradcam624} e \ref{fig:gradcam558} ilustram casos de falha completa, onde ambas as arquiteturas erraram a predição. 
+
+Na Figura~\ref{fig:gradcam624}, observa-se um caso de Falso Negativo (Rótulo Real: 1, Predição: 0). Através do Grad-CAM, fica evidente que os modelos sofreram de um "viés anatômico": a atenção da rede foi totalmente capturada pelo disco óptico (a estrutura circular brilhante à esquerda), ignorando as sutis alterações patológicas no restante do globo ocular. Como o disco óptico é uma estrutura normal, o modelo concluiu erroneamente que a retina era saudável.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\textwidth]{imagens/grad_cam/soube_nem_olhar/gradcam_erro_624.png}
+\caption{Exemplo de Falso Negativo: o modelo ancora sua predição no disco óptico (estrutura anatômica normal) e ignora as patologias, gerando um falso diagnóstico de saúde.}
+\label{fig:gradcam624}
+\end{figure}
+
+Já na Figura~\ref{fig:gradcam558}, ocorre um Falso Positivo (Rótulo Real: 0, Predição: 1). A imagem apresenta reflexos de iluminação muito marcados e artefatos próximos à borda e ao disco óptico. O mapa de ativação revela que os modelos interpretaram essas regiões de alto contraste e reflexos brilhantes como exsudatos ou anomalias, penalizando injustamente a imagem saudável. Esses erros sublinham a necessidade de futuras iterações focadas em supressão de brilho artificial e segmentação prévia do disco óptico.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\textwidth]{imagens/grad_cam/soube_nem_olhar/gradcam_erro_558.png}
+\caption{Exemplo de Falso Positivo: modelos confundem artefatos de iluminação e reflexos normais da retina com patologias.}
+\label{fig:gradcam558}
+\end{figure}
+
+\section{Comparação com a Literatura}
+
+Na Tabela~\ref{tab:comparacao-literatura} realiza-se uma comparação estrutural do método proposto frente aos trabalhos relacionados mencionados na Seção 2.
+
+\begin{table}[ht]
+\centering
+\caption{Comparação do método proposto com trabalhos correlatos}
+\label{tab:comparacao-literatura}
+\begin{tabular}{llccc}
+\hline
+\textbf{Trabalho} & \textbf{Imagens} & \textbf{Método} & \textbf{Classes} & \textbf{F1-score} \\
+\hline
+Gargeya et al. (2017) & 75.137 & CNN customizada & Binário & N/A (AUC 97\%) \\
+Lee et al. (2021) & 43.221 & ResNet-50 (OVR) & Múltiplas & N/A (AUC 96\%) \\
+Cen et al. (2021) & 249.620 & CNNs Hierárquicas & 39 classes & 92.3\% \\
+\textbf{Método Proposto} & \textbf{3.200} & \textbf{EfficientNet-B0/B3} & \textbf{Binário} & \textbf{86.95\%} \\
+\hline
+\end{tabular}
+\end{table}
+
+A abordagem sugerida é particularmente relevante porque consegue integrar explicabilidade visual de alto nível (Grad-CAM) em uma arquitetura de alta eficiência computacional (família EfficientNet), obtendo resultados robustos em uma base comparativamente mais escassa, barateando a prototipação e validação de diagnósticos automatizados.
+
+\section{Conclusão e Trabalhos Futuros}
+
+Este trabalho apresentou o desenvolvimento de uma metodologia robusta e acessível para classificação binária de imagens de fundo de olho em situações de risco e não-risco oftalmológico. Através do uso de Transferência de Aprendizado baseada em EfficientNet (B0 e B3), combinada com um pré-processamento avançado utilizando CLAHE e balanceamento de dados, o modelo foi treinado com sucesso numa base de dados restrita (RFMiD).
+
+A incorporação do método Grad-CAM agregou valor na identificação visual das características patológicas nas imagens, fortalecendo a viabilidade clínica do modelo ao dar embasamento à predição. Apesar de não treinar uma arquitetura tão massiva quanto outras na literatura, obteve-se um \textit{pipeline} computacionalmente mais leve e fácil de adaptar. Como trabalhos futuros, sugere-se a expansão para a classificação multirrótulo para identificar doenças específicas e a implementação do modelo em uma aplicação móvel como assistente virtual oftalmológico.
+
+\section*{Agradecimentos}
+
+Os autores agradecem o apoio institucional para o fomento desta pesquisa através da provisão dos recursos computacionais necessários para o treinamento das redes neurais.
+
+\bibliographystyle{sbc}
+\bibliography{sbc-template}
+
+\end{document}
