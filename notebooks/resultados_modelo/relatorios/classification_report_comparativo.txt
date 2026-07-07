@@ -1,0 +1,20 @@
+=== MODELO V1 ===
+              precision    recall  f1-score   support
+
+Saudável (0)       0.84      0.75      0.79       134
+   Risco (1)       0.93      0.96      0.95       506
+
+    accuracy                           0.92       640
+   macro avg       0.89      0.85      0.87       640
+weighted avg       0.91      0.92      0.92       640
+
+
+=== MODELO V2 ===
+              precision    recall  f1-score   support
+
+Saudável (0)       0.90      0.69      0.78       134
+   Risco (1)       0.92      0.98      0.95       506
+
+    accuracy                           0.92       640
+   macro avg       0.91      0.83      0.86       640
+weighted avg       0.92      0.92      0.91       640

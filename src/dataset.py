@@ -51,13 +51,13 @@ def load_and_balance_data():
     return df_train_balanceado, df_test, df_val, pesos_dit
 
 def get_data_generators(df_train_balanceado, df_val, df_test, version="V1"):
-    aug_params = dict(
-        rotation_range=20, width_shift_range=0.1, height_shift_range=0.1,
-        zoom_range=0.15, horizontal_flip=True, vertical_flip=True,
-        brightness_range=[0.8, 1.2], fill_mode="nearest"
+    datagen_aug = ImageDataGenerator(
+        rotation_range=50,
+        horizontal_flip=True,
+        vertical_flip=True,
+        brightness_range=[0.8, 1.2],
+        fill_mode='nearest'
     )
-
-    datagen_aug = ImageDataGenerator(**aug_params)
     datagen_clean = ImageDataGenerator()
 
     if version == "V1":

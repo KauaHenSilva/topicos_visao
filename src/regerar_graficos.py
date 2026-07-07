@@ -19,8 +19,10 @@ def regenerate_plot(version):
     # A transição real do V1 foi na época 6 e V2 na época 7.
     if version == "V1":
         transicao_idx = 6
+        model_name = "EfficientNetB0"
     else:
         transicao_idx = 7
+        model_name = "EfficientNetB3"
 
     epochs_base = list(range(1, transicao_idx + 1))
     epochs_fine = list(range(1, len(acc) - transicao_idx + 1)) # Começa do 1 para o finetune também para ficar bonito, ou mantém a época global? O user prefere separado, entao vamos usar épocas 1..N
@@ -34,7 +36,7 @@ def regenerate_plot(version):
     plt.subplot(1, 2, 1)
     plt.plot(epochs_base, acc[:transicao_idx], label='Treino', linewidth=2, color='#1f77b4')
     plt.plot(epochs_base, val_acc[:transicao_idx], label='Validação', linewidth=2, color='#ff7f0e')
-    plt.title(f'Evolução da Acurácia - {version} (Base)', fontsize=14)
+    plt.title(f'Evolução da Acurácia - {model_name} (Base)', fontsize=14)
     plt.xlabel('Épocas', fontsize=12)
     plt.ylabel('Acurácia', fontsize=12)
     plt.legend(loc='lower right')
@@ -44,7 +46,7 @@ def regenerate_plot(version):
     plt.subplot(1, 2, 2)
     plt.plot(epochs_base, loss[:transicao_idx], label='Treino', linewidth=2, color='#1f77b4')
     plt.plot(epochs_base, val_loss[:transicao_idx], label='Validação', linewidth=2, color='#ff7f0e')
-    plt.title(f'Evolução do Loss - {version} (Base)', fontsize=14)
+    plt.title(f'Evolução do Loss - {model_name} (Base)', fontsize=14)
     plt.xlabel('Épocas', fontsize=12)
     plt.ylabel('Loss', fontsize=12)
     plt.legend(loc='upper right')
@@ -64,7 +66,7 @@ def regenerate_plot(version):
         plt.subplot(1, 2, 1)
         plt.plot(epochs_fine, acc[transicao_idx:], label='Treino', linewidth=2, color='#1f77b4')
         plt.plot(epochs_fine, val_acc[transicao_idx:], label='Validação', linewidth=2, color='#ff7f0e')
-        plt.title(f'Evolução da Acurácia - {version} (Fine-Tune)', fontsize=14)
+        plt.title(f'Evolução da Acurácia - {model_name} (Fine-Tune)', fontsize=14)
         plt.xlabel('Épocas', fontsize=12)
         plt.ylabel('Acurácia', fontsize=12)
         plt.legend(loc='lower right')
@@ -74,7 +76,7 @@ def regenerate_plot(version):
         plt.subplot(1, 2, 2)
         plt.plot(epochs_fine, loss[transicao_idx:], label='Treino', linewidth=2, color='#1f77b4')
         plt.plot(epochs_fine, val_loss[transicao_idx:], label='Validação', linewidth=2, color='#ff7f0e')
-        plt.title(f'Evolução do Loss - {version} (Fine-Tune)', fontsize=14)
+        plt.title(f'Evolução do Loss - {model_name} (Fine-Tune)', fontsize=14)
         plt.xlabel('Épocas', fontsize=12)
         plt.ylabel('Loss', fontsize=12)
         plt.legend(loc='upper right')

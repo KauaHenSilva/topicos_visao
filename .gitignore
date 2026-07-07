@@ -8,5 +8,8 @@ wheels/
 
 # Virtual environments
 .venv
-notebook
-notebooks
+notebooks/dataset*
+notebooks.rar
+*.weights.h5
+*.ipynb
+*.ipynb_checkpoints

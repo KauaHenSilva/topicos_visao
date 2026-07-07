@@ -130,12 +130,12 @@ def generate_gradcam_comparative(df_test):
 
     plt.subplot(1, 3, 2)
     plt.imshow(sup_v1)
-    plt.title(f"Grad-CAM V1 (EfficientNetB0)\nPred: {pred_v1:.3f}")
+    plt.title(f"Grad-CAM EfficientNetB0\nPred: {pred_v1:.3f}")
     plt.axis("off")
 
     plt.subplot(1, 3, 3)
     plt.imshow(sup_v2)
-    plt.title(f"Grad-CAM V2 (EfficientNetB3)\nPred: {pred_v2:.3f}")
+    plt.title(f"Grad-CAM EfficientNetB3\nPred: {pred_v2:.3f}")
     plt.axis("off")
 
     plt.tight_layout()
@@ -261,12 +261,12 @@ def generate_categorized_gradcams(df_test, csv_path=None, num_samples=2):
 
         plt.subplot(1, 3, 2)
         plt.imshow(sup_v1)
-        plt.title(f"V1 | Pred: {item['pred_v1']} (Prob: {item['prob_v1']:.3f})")
+        plt.title(f"EfficientNetB0 | Pred: {item['pred_v1']} (Prob: {item['prob_v1']:.3f})")
         plt.axis("off")
 
         plt.subplot(1, 3, 3)
         plt.imshow(sup_v2)
-        plt.title(f"V2 | Pred: {item['pred_v2']} (Prob: {item['prob_v2']:.3f})")
+        plt.title(f"EfficientNetB3 | Pred: {item['pred_v2']} (Prob: {item['prob_v2']:.3f})")
         plt.axis("off")
 
         plt.tight_layout()

@@ -1,7 +1,6 @@
 import os
 import tensorflow as tf
 from tensorflow.keras import mixed_precision
-# mixed_precision.set_global_policy('mixed_float16')
 
 # Caminhos base
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -43,7 +42,7 @@ CLINICAL_THRESHOLD = 0.35
 LEARNING_RATE_BASE = 0.001
 LEARNING_RATE_FINE = 1e-5
 
-# Configurações V1 (EfficientNetB0)
+# Configurações V1 (EfficientNetB0) 
 IMG_SIZE_V1 = (384, 384)
 BATCH_SIZE_V1 = 2
 CHECKPOINT_PATH_V1 = os.path.join(MODELOS_DIR, "melhor_modelo_v1.weights.h5")
